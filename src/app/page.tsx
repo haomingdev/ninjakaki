@@ -1,77 +1,80 @@
-import { prisma } from '@/lib/prisma'
-import Link from 'next/link'
-import React from 'react'
+'use client'
 
-export default async function Home() {
-  const accounts = await prisma.account.findMany({
-    include: {
-      scheme: true,
-    },
-  })
+import { useState } from 'react'
+import { useRouter } from 'next/navigation'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 
-  const screens = [
-    {
-      name: 'Get Accounts',
-      description: 'View and manage all bank accounts',
-      path: '/screens/getAccounts',
-      color: 'blue',
-    },
-    {
-      name: 'Transactions',
-      description: 'View all account transactions',
-      path: '/screens/transactions',
-      color: 'green',
-    },
-    {
-      name: 'Balances',
-      description: 'Check current account balances',
-      path: '/screens/balances',
-      color: 'yellow',
-    },
-    {
-      name: 'Schemes',
-      description: 'Manage account schemes and types',
-      path: '/screens/schemes',
-      color: 'purple',
-    },
-  ]
+export default function Home() {
+  const [ic, setIc] = useState('')
+  const router = useRouter()
+
+  const viewScores = (type: string) => {
+    if (!ic) {
+      alert('Please enter an IC number')
+      return
+    }
+    router.push(`/screens/${type}?ic=${ic}`)
+  }
 
   return (
-    <main className="min-h-screen bg-gray-100 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">PayHack 2024</h1>
-        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
-          {screens.map((screen) => (
-            <Link
-              key={screen.path}
-              href={screen.path}
-              className="block hover:transform hover:scale-105 transition-all"
-            >
-              <div className={`bg-white overflow-hidden shadow rounded-lg p-6 border-l-4 border-${screen.color}-500`}>
-                <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  {screen.name}
-                </h2>
-                <p className="text-gray-500">{screen.description}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-        <div className="w-full max-w-4xl">
-          <h2 className="text-2xl font-semibold mb-4">Accounts</h2>
-          <div className="grid gap-4">
-            {accounts.map((account) => (
-              <div
-                key={account.id}
-                className="p-4 border rounded-lg shadow hover:shadow-md transition-shadow"
+    <main className="container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-6">Financial Risk Assessment</h1>
+      
+      <Card className="mb-6">
+        <CardHeader>
+          <CardTitle>Enter IC Number</CardTitle>
+          <CardDescription>View detailed financial assessment scores</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <input
+              type="text"
+              value={ic}
+              onChange={(e) => setIc(e.target.value)}
+              placeholder="Enter IC number"
+              className="w-full p-2 border rounded"
+            />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Overall Behavioral Score */}
+              <button
+                onClick={() => viewScores('behavioural-score')}
+                className="p-2 bg-red-500 text-white rounded hover:bg-red-600 md:col-span-2"
               >
-                <h3 className="font-medium">{account.accountHolderFullName}</h3>
-                <p className="text-gray-600">{account.accountNumber}</p>
-                <p className="text-sm text-gray-500">{account.accountType}</p>
-              </div>
-            ))}
+                View Overall Behavioral Score
+              </button>
+
+              {/* Individual Component Scores */}
+              <button
+                onClick={() => viewScores('financial-habits')}
+                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                View Financial Habits
+              </button>
+
+              <button
+                onClick={() => viewScores('stability')}
+                className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
+              >
+                View Stability Score
+              </button>
+
+              <button
+                onClick={() => viewScores('professionalism')}
+                className="p-2 bg-purple-500 text-white rounded hover:bg-purple-600 md:col-span-2"
+              >
+                View Professionalism Score
+              </button>
+            </div>
           </div>
-        </div>
-      </div>
+        </CardContent>
+      </Card>
     </main>
   )
 }
