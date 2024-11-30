@@ -1,8 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider = "prisma-client-js"
@@ -13,116 +13,55 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model AccountScheme {
-  id          Int       @id @default(autoincrement())
-  schemeName  String    @map("scheme_name")
-  description String?
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  accounts    Account[]
-
-  @@map("accountscheme")
-}
-
-model Account {
-  id                    Int       @id @default(autoincrement())
-  accountId             String    @unique @map("account_id")
-  bicCode              String    @map("bic_code")
-  providerType         String    @map("provider_type")
-  accountNumber        String    @unique @map("account_number")
-  accountType          String    @map("account_type")
-  accountDescription   String    @map("account_description")
-  accountHolderFullName String    @map("account_holder_full_name")
-  idType               String    @map("id_type")
-  idValue              String    @map("id_value")
-  accountHolderEmail   String?   @map("account_holder_email")
-  accountHolderMobile  String?   @map("account_holder_mobile")
-  productType          String    @map("product_type")
-  shariaCompliance     Boolean   @map("sharia_compliance")
-  accountCurrency      String    @default("MYR") @map("account_currency")
-  schemeId             Int       @map("scheme_id")
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
-  scheme               AccountScheme @relation(fields: [schemeId], references: [id])
-  balances            Balance[]
-  transactions        Transaction[]
-
-  @@map("account")
-}
-
-model BalanceScheme {
-  id          Int       @id @default(autoincrement())
-  schemeName  String    @map("scheme_name")
-  description String?
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  balances    Balance[]
-
-  @@map("balancescheme")
-}
-
-model Balance {
-  id                     Int       @id @default(autoincrement())
-  accountId              String    @map("account_id")
-  accountBalanceDateTime DateTime  @map("account_balance_datetime")
-  outstandingBalance     Decimal?  @map("outstanding_balance")
-  pendingBalance         Decimal?  @map("pending_balance")
-  availableBalance       Decimal?  @map("available_balance")
-  creditLimit            Decimal?  @map("credit_limit")
-  accountCurrency        String    @map("account_currency")
-  repaymentDueDate       DateTime? @map("repayment_due_date")
-  repaymentAmountDue     Decimal?  @map("repayment_amount_due")
-  repaymentFrequency     String?   @map("repayment_frequency")
-  maturityDate           DateTime? @map("maturity_date")
-  schemeId               Int       @map("scheme_id")
-  createdAt              DateTime  @default(now()) @map("created_at")
-  updatedAt              DateTime  @updatedAt @map("updated_at")
-  account                Account   @relation(fields: [accountId], references: [accountId])
-  scheme                 BalanceScheme @relation(fields: [schemeId], references: [id])
-
-  @@map("balance")
-}
-
-model TransactionScheme {
-  id          Int       @id @default(autoincrement())
-  schemeName  String    @map("scheme_name")
-  description String?
-  createdAt   DateTime  @default(now()) @map("created_at")
-  updatedAt   DateTime  @updatedAt @map("updated_at")
-  transactions Transaction[]
-
-  @@map("transactionscheme")
-}
-
 model Transaction {
-  id                    Int       @id @default(autoincrement())
-  accountId             String    @map("account_id")
-  paymentScheme         String    @map("payment_scheme")
-  creditDebitIndicator  String    @map("credit_debit_indicator")
-  transactionId         String    @unique @map("transaction_id")
-  transactionType       String    @map("transaction_type")
-  transactionAmount     Decimal?  @map("transaction_amount")
-  transactionCurrency   String?   @map("transaction_currency")
-  accountCurrencyAmount Decimal   @map("account_currency_amount")
-  accountCurrency       String    @map("account_currency")
-  fxRate               Decimal?  @map("fx_rate")
-  status               String    @map("status")
-  bookingDatetime      DateTime  @map("booking_datetime")
-  valueDatetime        DateTime  @map("value_datetime")
-  merchantCategoryCode  String?   @map("merchant_category_code")
-  merchantName         String?   @map("merchant_name")
-  merchantAddress      String?   @map("merchant_address")
-  merchantPostalCode   String?   @map("merchant_postal_code")
-  merchantCity         String?   @map("merchant_city")
-  merchantCountry      String?   @map("merchant_country")
-  categoryPurposeCode  String?   @map("category_purpose_code")
-  businessCategoryCode String?   @map("business_category_code")
-  msic                String?   @map("msic")
-  schemeId             Int       @map("scheme_id")
-  createdAt            DateTime  @default(now()) @map("created_at")
-  updatedAt            DateTime  @updatedAt @map("updated_at")
-  account              Account   @relation(fields: [accountId], references: [accountId])
-  scheme               TransactionScheme @relation(fields: [schemeId], references: [id])
+  id                         Int      @id @default(autoincrement())
+  ic                        String   @db.VarChar(14)
+  fullName                  String   @map("full_name") @db.VarChar(100)
+  spendingAmount            Float    @map("spending_amount")
+  receipientCategory        String   @map("receipient_category")
+  necessitiesOrNonEssential Boolean  @map("necessities_or_non_essential")
+  timestamp                 DateTime
 
-  @@map("transaction")
+  user                      FinancialMetrics[] @relation("UserTransactions")
+
+  @@index([ic])
+  @@index([timestamp])
+  @@map("transactions")
 }
+
+model FinancialMetrics {
+  id                            Int      @id @default(autoincrement())
+  ic                           String   @db.VarChar(14)
+  fullName                     String   @map("full_name") @db.VarChar(100)
+  cancellationRate             Float    @map("cancellation_rate")
+  ratings                      Float
+  responsivenessToTask         Float    @map("responsiveness_to_task")
+  minMaxDiffPast6Months        Float    @map("min_max_diff_past_6_months")
+  ratingsInflux                Float    @map("ratings_influx")
+  typeOfGig                    String   @map("type_of_gig")
+  socialMediaActivenessScore   Float    @map("social_media_activeness_score")
+  permanentEmployment          String   @map("permanent_employment")
+  yearsOfEmployment           Int      @map("years_of_employment")
+  fluctuationRate             Float    @map("fluctuation_rate")
+  grossIncome                 Float    @map("gross_income")
+  netIncome                   Float    @map("net_income")
+  impulsivePurchaseRate       Float    @map("impulsive_purchase_rate")
+  recurringExpenseConsistency Float    @map("recurring_expense_consistency")
+  expenseToIncomeRatio        Float    @map("expense_to_income_ratio")
+  regularSaving               Boolean  @map("regular_saving")
+  regularSavingsAmount        Float    @map("regular_savings_amount")
+  emergencyFundAvailability   Boolean  @map("emergency_fund_availability")
+  emergencyFundAmount         Float    @map("emergency_fund_amount")
+  consistentSpending          Boolean  @map("consistent_spending")
+  spendingAmount             Float    @map("spending_amount")
+  portfolioDiversificationRisk Float    @map("portfolio_diversification_risk")
+  awarenessOfUtilisationOfPfm Int      @map("awareness_of_utilisation_of_pfm")
+  timestamp                   DateTime
+
+  transactions                Transaction[] @relation("UserTransactions")
+
+  @@index([ic])
+  @@index([timestamp])
+  @@map("financial_metrics")
+}
+
