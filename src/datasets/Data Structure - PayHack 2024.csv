@@ -1,0 +1,222 @@
+,"Endpoint 
+/accounts
+/account/{AccountId}",,,,,,,,,
+,,,,,,,,,,
+#,Attribute,Mandatory or Optional,Example,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant)
+1,BIC Code/Agent-id,Mandatory,"1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",Y,Y,Y,Y,Y,Y,Y
+2,Provider Type,Mandatory,"Bank, E-wallet, Fintech, Insurance",Y,Y,Y,Y,Y,Y,Y
+,AccountId,Mandatory,ABCD123456789,,,,,,,
+3,Account Number,Mandatory,712391981009,Y,Y,Y,Y,Y,Y,Y
+4,Account Type,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)",Y,Y,Y,Y,Y,Y,Y
+5,Account Description,Mandatory,CASA 365 Account,Y,Y,Y,Y,Y,Y,Y
+6,Account Holder Full Name,Mandatory,Sam Leong Hun Ho,Y,Y,Y,Y,Y,Y,Y
+7,Id Type,Mandatory,Type = NRIC or Passport,Y,Y,Y,Y,Y,Y,Y
+8,Id Value,Mandatory,NRIC or Passport #,Y,Y,Y,Y,Y,Y,Y
+9,Account Holder Email Address,Optional,sam123456@gmail.com,Y,Y,Y,Y,Y,Y,Y
+10,Account Holder Mobile Number,Optional,60312345678,Y,Y,Y,Y,Y,Y,Y
+11,ProductType,Mandatory,Islamic or Conventional,Y,Y,Y,Y,Y,Y,Y
+12,ShariaCompliance,Mandatory,"True, False, Unknown
+Whether or not the creditor account is sharia compliant",Y,Y,Y,Y,Y,Y,Y
+
+,,,,,,,"Endpoint 
+/accounts
+/account/{AccountId}",,Unambiguous identification of the account to which credit and debit entries are made. [...],,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,
+#,Attribute,,,,Mandatory or Optional,Example,UK Open Banking Equivalent Attribute,UK Open Banking Mandatory or Optional,UK Open Banking Description,Type,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant),,,,
+,Account,,,,,,OBAccount6,,,Scheme,,,,,,,,,,,
+,,AccountId,,,Mandatory,ABCD123456789,AccountId,mandatory,A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.,,,,,,,,,,,,
+,,AccountNumber,,,Mandatory,712391981009,Account,optional,Provides the details to identify an account.,Object,Y,Y,Y,Y,Y,Y,Y,,,,
+,,AccountCategory,,,Optional,"Personal, Business",AccountCategory,optional,Specifies the type of account (personal or business).,Attribute,,,,,,,,,,,
+,,AccountTypeCode,,,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)","
+AccountTypeCode",optional,"
+Specifies the sub type of account (product family group) using ISO 20022 values.",Attribute,Y,Y,Y,Y,Y,Y,Y,,,,
+,,ProductType,,,Mandatory,Islamic or Conventional,not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,ShariaCompliance,,,Mandatory,"True, False, Unknown
+Whether or not the creditor account is sharia compliant",not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,Provider Type,,,Mandatory,"Bank, E-wallet, Fintech, Insurance",,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,Account Description,,,Mandatory,CASA 365 Account,Description,optional,Specifies the description of the account type.,Attribute,Y,Y,Y,Y,Y,Y,Y,,,,
+,,Servicer,,,,,,,,,,,,,,,,,,,
+,,,SchemeName,,Mandatory,,,,,,,,,,,,,,,,
+,,,Identification,,Mandatory,,,,,,,,,,,,,,,,
+,,,Name,,Optional,,,,,,,,,,,,,,,,
+,,AccountHolder,,,,,,,,,,,,,,,,,,,
+,,,AccountHolderFullName,,Mandatory,Sam Leong Hun Ho,Account.name,optional,"The account name is the name or names of the account owner(s) represented at an account level, as displayed by the ASPSP's online channels. Note, the account name is not the product name or the nickname of the account.",Attribute,Y,Y,Y,Y,Y,Y,Y,,,,
+,,,Identification,,,,,,,,,,,,,,,,,,
+,,,,SchemeName,Mandatory,Type = NRIC or Passport,not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,,,Identification,Mandatory,NRIC or Passport #,not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,,Account Holder Email Address,,Optional,sam123456@gmail.com,not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+,,,Account Holder Mobile Number,,Optional,60312345678,not in scope - UK Open Banking,,,,Y,Y,Y,Y,Y,Y,Y,,,,
+
+,"Endpoint 
+/balances
+/account/{AccountId}/balances",,,,,,,,,
+,,,,,,,,,,
+#,Attribute,Mandatory or Optional,Example,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant)
+1,BIC Code/Agent-id,Mandatory,"1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",Y,Y,Y,Y,Y,Y,Y
+,AccountId,Mandatory,ABCD123456789,,,,,,,
+2,Account Number,Mandatory,712391981009,Y,Y,Y,Y,Y,Y,Y
+3,Account Type,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)",Y,Y,Y,Y,Y,Y,Y
+,CreditDebitIndicator,,,,,,,,,
+4,Account Balance DateTime,Mandatory,2017-04-05T10:43:07+00:00,Y,Y,Y,Y,Y,Y,Y
+5,Outstanding Balance,"Mandatory, if Loan Product",522.9,N,Y,Y,Y,Y,N,N
+6,Pending Balance,"Mandatory, if in (Credit Card, CASA, E-Wallet)",225,Y,Y,N,N,N,Y,Y
+7,Available Balance,"Mandatory, if in (Credit Card, CASA, E-Wallet)",18000,Y,Y,N,N,N,Y,Y
+8,Credit Limit,"Mandatory, if Credit Card",18747.9,N,Y,N,N,N,N,N
+9,Account Currency,Mandatory,MYR,Y,Y,Y,Y,Y,Y,Y
+10,Repayment Due Date,"Mandatory, if Loan Product",2024-08-13,N,Y,Y,Y,Y,N,N
+11,Repayment Amount Due,"Mandatory, if Loan product",522.9,N,Y,Y,Y,Y,N,N
+12,Repayment Frequency,"Mandatory, if Loan Product","Monthly, Quarterly, Yearly",N,Y,Y,Y,Y,N,N
+13,Maturity Date,"Mandatory, if Loan Product",2025-09-15,N,N,Y,Y,Y,N,N
+
+
+,,,,,,,,"Endpoint 
+/balances
+/account/{AccountId}/balances",,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,
+#,Attribute,,,,,Mandatory or Optional,Example,UK Open Banking Equivalent Attribute,UK Open Banking Mandatory or Optional,UK Open Banking Description,Type,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant),
+,Balance,,,,,,,,,,,,,,,,,,
+,,AccountId,,,,Mandatory,ABCD123456789,AccountId,mandatory,A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.,,,,,,,,,
+,,Account Number,,,,Mandatory,712391981009,Account,optional,Provides the details to identify an account.,Object,Y,Y,Y,Y,Y,Y,Y,
+,,Account Type,,,,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)","AccountCategory
+AccountTypeCode",optional,"Specifies the type of account (personal or business).
+Specifies the sub type of account (product family group) using ISO 20022 values.",Attributes,Y,Y,Y,Y,Y,Y,Y,
+,,Account Balance DateTime,,,,Mandatory,2017-04-05T10:43:07+00:00,DateTime,mandatory,Indicates the date (and time) of the balance.All dates in the JSON payloads are represented in ISO 8601 date-time format. All date-time fields in responses must include the timezone. An example is below: 2017-04-05T10:43:07+00:00,attributes,Y,Y,Y,Y,Y,Y,Y,
+,,Type,,,,,,,,,,,,,,,,,
+,,CreditDebitIndicator,,,,Mandatory,,,,,,,,,,,,,
+,,Amount,,,,Optional,,Amount,,,,N,N,Y,Y,Y,N,N,
+,,,Amount,,,Optional,522.9,Amount,,,,N,Y,Y,Y,Y,N,N,
+,,,Currency,,,Optional,225,Amount,,,,Y,Y,N,N,N,Y,Y,
+,,CreditLine,,,,Optional,18747.9,CreditLine,,,object,N,Y,N,N,N,N,N,
+,,,Included,,,,,,,,,,,,,,,,
+,,,Type,,,,,,,,,,,,,,,,
+,,,Amount,,,,,,,,,,,,,,,,
+,,,,Amount,,,,,,,,,,,,,,,
+,,,,Currency,,,,,,,,,,,,,,,
+,,Repayment,,,,,,,,,,,,,,,,,
+,,,Due Date,,,Optional,2024-08-13,DateTime,,,,N,Y,Y,Y,Y,N,N,
+,,,Amount,,,Optional,522.9,Amount,,,,N,Y,Y,Y,Y,N,N,
+,,,,Amount,,,,,,,,,,,,,,,
+,,,,Currency,,,,,,,,,,,,,,,
+,,,Frequency,,,Optional,"Monthly, Quarterly, Yearly",,,,,N,Y,Y,Y,Y,N,N,
+,,MaturityDate,,,,Optional,2025-09-15,MaturityDate,optional,Maturity date of the account.All dates in the JSON payloads are represented in ISO 8601 date-time format. All date-time fields in responses must include the timezone. An example is below: 2017-04-05T10:43:07+00:00,,N,Y,Y,Y,Y,N,N,
+
+
+,"Endpoint 
+/transactions
+/account/{AccountId}/transactions",,,,,,,,,
+,,,,,,,,,,
+#,Attribute,Mandatory or Optional,Example,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant)
+1,BIC Code/Agent-id,Mandatory,"1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",Y,Y,Y,Y,Y,Y,Y
+,AccountId,Mandatory,ABCD123456789,,,,,,,
+2,Account Number,Mandatory,712391981009,Y,Y,Y,Y,Y,Y,Y
+3,Account Type,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)",Y,Y,Y,Y,Y,Y,Y
+4,Payment Scheme,Mandatory,"DuitNow Transfer, Duitnow QR, FPX, JomPay, myDebit, VISA, Master, AMEX, JCB, UnionPay, On-Us Book Transfer",Y,Y,Y,Y,Y,Y,Y
+5,Credit Debit Indicator,Mandatory,"DEBIT, CREDIT",Y,Y,Y,Y,Y,Y,Y
+6,Transaction ID,Mandatory,c46d7cb8-500d-48ba-a085-671173a84cd3,Y,Y,Y,Y,Y,Y,Y
+7,Transaction Type,Mandatory,"CASA: SAVINGS, WITHDRAWAL, TRANSFER, POSDEBIT, ATM WITHDRAWAL, BILLPAYMENT, FEE, DEPOSIT, ADJUSTMENT, PAYMENT, INTEREST, ATMDEPOSIT
+CARD: ISO 8583
+LOANS: DRAWDOWN, ADJUSTMENT, FEE, INTEREST, PAYMENT
+e-wallet: Similar to CASA",Y,Y,Y,Y,Y,Y,Y
+8,Transaction Amount,"Mandatory, if transaction currency != account currency",300,Y,Y,Y,Y,Y,Y,Y
+9,Transaction Currency,"Mandatory, if transaction currency != account currency",INR,Y,Y,Y,Y,Y,Y,Y
+10,Account Currency Amount,Mandatory,100,Y,Y,Y,Y,Y,Y,Y
+11,Account Currency,Mandatory,MYR,Y,Y,Y,Y,Y,Y,Y
+12,FX rate,"Mandatory, if transaction currency != account currency",0.3333,Y,Y,Y,Y,Y,Y,Y
+13,Status,Mandatory,"Pending, Completed, Cancelled",Y,Y,Y,Y,Y,Y,Y
+14,Booking DateTime,Mandatory,2017-04-05T10:43:07+00:00,Y,Y,Y,Y,Y,Y,Y
+15,Value DateTime,Mandatory,2017-04-05T10:43:07+00:00,Y,Y,Y,Y,Y,Y,Y
+16,Merchant Category Code,"Mandatory, if Card transaction & QR Payment",5944,Y,Y,N,N,N,Y,Y
+17,Merchant Name,"Mandatory, if Card transaction & QR Payment",ROLEX BY THE HOUR G-ION SINGAPORE SG,Y,Y,N,N,N,Y,Y
+18,Merchant Address,"Mandatory, if Card transaction & QR Payment","No.3, Jalan Ceylon, Bukit Ceylon",Y,Y,N,N,N,Y,Y
+19,Merchant Postal Code,"Mandatory, if Card transaction & QR Payment",50200,Y,Y,N,N,N,Y,Y
+20,Merchant City,"Mandatory, if Card transaction & QR Payment",Kuala Lumpur,Y,Y,N,N,N,Y,Y
+21,Merchant Country,"Mandatory, if Card transaction & QR Payment",MY,Y,Y,N,N,N,Y,Y
+22,Category Purpose Code,"Mandatory, if Payment Scheme in (DuitNow Transfer, DuitNow QR)","BONU, CASH",Y,Y,Y,Y,Y,Y,Y
+23,Business Category Codes,"Mandatory, if Payment Scheme = FPX","0001, 0002, 0003",Y,Y,Y,Y,Y,Y,Y
+24,MSIC,"Mandatory, if Payment Scheme = FPX","10101, 10102, 10103",Y,Y,Y,Y,Y,Y,Y
+25,Biller Code,"Mandatory, if Payment Scheme = JomPay",1123,Y,Y,Y,Y,Y,Y,Y
+26,Biller Code Name,"Mandatory, if Payment Scheme = JomPay",Maxis,Y,Y,Y,Y,Y,Y,Y
+27,Creditor BIC/Agent-id,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",Y,Y,Y,Y,Y,Y,Y
+28,Creditor Agent Name,"Mandatory, if Fund Transfer (both on-us & off-us)",Maybank Malaysia,Y,Y,Y,Y,Y,Y,Y
+29,Creditor Account Number,"Mandatory, if Fund Transfer (both on-us & off-us)",712391981009,Y,Y,Y,Y,Y,Y,Y
+30,Creditor Account Name,"Mandatory, if Fund Transfer (both on-us & off-us)",Jean Huang,Y,Y,Y,Y,Y,Y,Y
+31,Debitor BIC/Agent-id,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",Y,Y,Y,Y,Y,Y,Y
+32,Debitor Agent Name,"Mandatory, if Fund Transfer (both on-us & off-us)",DBS Bank Malaysia,Y,Y,Y,Y,Y,Y,Y
+33,Debitor Account Number,"Mandatory, if Fund Transfer (both on-us & off-us)",12312981009,Y,Y,Y,Y,Y,Y,Y
+34,Debitor Name,"Mandatory, if Fund Transfer (both on-us & off-us)",Patricia Chin,Y,Y,Y,Y,Y,Y,Y
+
+
+,,,,,,,,,,,,"Endpoint 
+/transactions
+/account/{AccountId}/transactions",,,,,,,,,,,
+,,,,,,,,,,,,,,,,,,,,,,,
+#,Attribute,,,,,,,,,Mandatory or Optional,Example,UK Open Banking Equivalent Attribute,UK Open Banking Mandatory or Optional,UK Open Banking Description,Type,CASA,Credit Card,Personal Loan,Auto Loan,Mortgage Loan,E-Wallet (Individual),E-Wallet (Merchant),
+,Transaction,,,,,,,,,,,,,,,,,,,,,,
+,,AccountId,,,,,,,,Mandatory,,AccountId,mandatory,A unique and immutable identifier used to identify the account resource. This identifier has no meaning to the account owner.,,,,,,,,,
+,,AccountNumber,,,,,,,,Mandatory,712391981009,Account,optional,Provides the details to identify an account.,Object,Y,Y,Y,Y,Y,Y,Y,
+,,AccountType,,,,,,,,Mandatory,"Savings, Credit Card, Personal Loan, Auto Loan, Mortgage Loan, E-Wallet (Individual), E-Wallet (Merchant)","AccountCategory
+AccountTypeCode",optional,"Specifies the type of account (personal or business).
+Specifies the sub type of account (product family group) using ISO 20022 values.",Attribute,Y,Y,Y,Y,Y,Y,Y,
+,,PaymentScheme,,,,,,,,Mandatory,"DuitNow Transfer, Duitnow QR, FPX, JomPay, myDebit, VISA, Master, AMEX, JCB, UnionPay, On-Us Book Transfer",CardInstrument,optional,Set of elements to describe the card instrument used in the transaction.,Object,Y,Y,Y,Y,Y,Y,Y,
+,,,PaymentSchemeName,,,,,,,,,,,,,,,,,,,,
+,,,AuthorisationType,,,,,,,,,,,,,,,,,,,,
+,,,Identification,,,,,,,,,,,,,,,,,,,,
+,,,Name,,,,,,,,,,,,,,,,,,,,
+,,CreditDebitIndicator,,,,,,,,Mandatory,"DEBIT, CREDIT",CreditDebitIndicator,mandatory,,,Y,Y,Y,Y,Y,Y,Y,
+,,Transaction ID,,,,,,,,Mandatory,c46d7cb8-500d-48ba-a085-671173a84cd3,TransactionId,mandatory,,,Y,Y,Y,Y,Y,Y,Y,
+,,CategoryPurposeCode,,,,,,,,Mandatory,"CASA: SAVINGS, WITHDRAWAL, TRANSFER, POSDEBIT, ATM WITHDRAWAL, BILLPAYMENT, FEE, DEPOSIT, ADJUSTMENT, PAYMENT, INTEREST, ATMDEPOSIT
+CARD: ISO 8583
+LOANS: DRAWDOWN, ADJUSTMENT, FEE, INTEREST, PAYMENT
+e-wallet: Similar to CASA","CategoryPuposeCode (ExternalCategoryPurpose1Code)
+PaymentPurposeCode (ExternalPurpose1Code)",optional,"Enumeration of codes that outlines the type of purpose behind a transaction, payment or risk. For all enum values see ExternalCategoryPurpose1Code ",Attribute,Y,Y,Y,Y,Y,Y,Y,
+,,PaymentPurposeCode,,,,,,,,,,,,,,,,,,,,,
+,,Status,,,,,,,,Mandatory,"Pending, Completed, Cancelled",Status,mandatory,,,Y,Y,Y,Y,Y,Y,Y,
+,,Booking DateTime,,,,,,,,Mandatory,2017-04-05T10:43:07+00:00,BookingDateTime,mandatory,,,Y,Y,Y,Y,Y,Y,Y,
+,,Value DateTime,,,,,,,,Mandatory,2017-04-05T10:43:07+00:00,ValueDateTime,optional,,,Y,Y,Y,Y,Y,Y,Y,
+,,Amount,,,,,,,,"Mandatory, if transaction currency != account currency",300,Amount,,,,Y,Y,Y,Y,Y,Y,Y,
+,,,Amount,,,,,,,,,,,,,,,,,,,,
+,,,Currency,,,,,,,"Mandatory, if transaction currency != account currency",INR,Currency,,,,Y,Y,Y,Y,Y,Y,Y,
+,,Account Currency Amount,,,,,,,,Mandatory,100,Amount,,,,Y,Y,Y,Y,Y,Y,Y,
+,,Account Currency,,,,,,,,Mandatory,MYR,Currency,,,,Y,Y,Y,Y,Y,Y,Y,
+,,CurrencyExchange,,,,,,,,"Mandatory, if transaction currency != account currency",0.3333,CurrencyExchange,optional,Set of elements used to provide details on the currency exchange.,Object,Y,Y,Y,Y,Y,Y,Y,
+,,,SourceCurrency,,,,,,,,,,,,,,,,,,,,
+,,,TargetCurrency,,,,,,,,,,,,,,,,,,,,
+,,,UnitCurrency,,,,,,,,,,,,,,,,,,,,
+,,,ExchangeRate,,,,,,,,,,,,,,,,,,,,
+,,MerchantDetails,,,,,,,,,,,,,,,,,,,,,
+,,,MerchantCategoryCode,,,,,,,"Mandatory, if Card transaction & QR Payment",5944,MerchantCategoryCode,optional,"Category code conform to ISO 18245, related to the type of services or goods the merchant provides for the transaction.",,Y,Y,N,N,N,Y,Y,
+,,,MerchantName,,,,,,,"Mandatory, if Card transaction & QR Payment",ROLEX BY THE HOUR G-ION SINGAPORE SG,MerchantName,optional,,,Y,Y,N,N,N,Y,Y,
+,,,MerchantAddress,,,,,,,"Mandatory, if Card transaction & QR Payment","No.3, Jalan Ceylon, Bukit Ceylon",not covered ,,,,Y,Y,N,N,N,Y,Y,
+,,,,Address,,,,,,,,,,,,,,,,,,,
+,,,,PostalCode,,,,,,"Mandatory, if Card transaction & QR Payment",50200,not covered ,,,,Y,Y,N,N,N,Y,Y,
+,,,,City,,,,,,"Mandatory, if Card transaction & QR Payment",Kuala Lumpur,not covered ,,,,Y,Y,N,N,N,Y,Y,
+,,,,Country,,,,,,"Mandatory, if Card transaction & QR Payment",MY,not covered ,,,,Y,Y,N,N,N,Y,Y,
+,,Business Category Codes,,,,,,,,"Mandatory, if Payment Scheme = FPX","0001, 0002, 0003",,,,,Y,Y,Y,Y,Y,Y,Y,
+,,MSIC,,,,,,,,"Mandatory, if Payment Scheme = FPX","10101, 10102, 10103",,,,,Y,Y,Y,Y,Y,Y,Y,
+,,Biller Code,,,,,,,,"Mandatory, if Payment Scheme = JomPay",1123,,,,,Y,Y,Y,Y,Y,Y,Y,
+,,Biller Code Name,,,,,,,,"Mandatory, if Payment Scheme = JomPay",Maxis,,,,,Y,Y,Y,Y,Y,Y,Y,
+,,CreditorAgent,,,,,,,,,,,,,,,,,,,,,
+,,,SchemeName,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",CreditorAgent,optional,,,Y,Y,Y,Y,Y,Y,Y,
+,,,Identification,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)",Maybank Malaysia,CreditorAgent,optional,"Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. This is the servicer of the beneficiary account.",object,Y,Y,Y,Y,Y,Y,Y,
+,,,Name,,,,,,,,,,,,,,,,,,,,
+,,CreditorAccount,,,,,,,,,,,,,,,,,,,,,
+,,,SchemeName,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",CreditorAgent,optional,,,Y,Y,Y,Y,Y,Y,Y,
+,,,Identification,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)",Maybank Malaysia,CreditorAgent,optional,"Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. This is the servicer of the beneficiary account.",object,Y,Y,Y,Y,Y,Y,Y,
+,,,Name,,,,,,,,,,,,,,,,,,,,
+,,DebtorAgent,,,,,,,,,,,,,,,,,,,,,
+,,,SchemeName,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",CreditorAgent,optional,,,Y,Y,Y,Y,Y,Y,Y,
+,,,Identification,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)",Maybank Malaysia,CreditorAgent,optional,"Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. This is the servicer of the beneficiary account.",object,Y,Y,Y,Y,Y,Y,Y,
+,,,Name,,,,,,,,,,,,,,,,,,,,
+,,DebtorAccount,,,,,,,,,,,,,,,,,,,,,
+,,,SchemeName,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)","1. Data Provider's unique identifier (Malaysia)
+2. Agent-id for non-banks",CreditorAgent,optional,,,Y,Y,Y,Y,Y,Y,Y,
+,,,Identification,,,,,,,"Mandatory, if Fund Transfer (both on-us & off-us)",Maybank Malaysia,CreditorAgent,optional,"Party that manages the account on behalf of the account owner, that is manages the registration and booking of entries on the account, calculates balances on the account and provides information about the account. This is the servicer of the beneficiary account.",object,Y,Y,Y,Y,Y,Y,Y,
+,,,Name,,,,,,,,,,,,,,,,,,,,

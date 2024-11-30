@@ -1,0 +1,128 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model AccountScheme {
+  id          Int       @id @default(autoincrement())
+  schemeName  String    @map("scheme_name")
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  accounts    Account[]
+
+  @@map("accountscheme")
+}
+
+model Account {
+  id                    Int       @id @default(autoincrement())
+  accountId             String    @unique @map("account_id")
+  bicCode              String    @map("bic_code")
+  providerType         String    @map("provider_type")
+  accountNumber        String    @unique @map("account_number")
+  accountType          String    @map("account_type")
+  accountDescription   String    @map("account_description")
+  accountHolderFullName String    @map("account_holder_full_name")
+  idType               String    @map("id_type")
+  idValue              String    @map("id_value")
+  accountHolderEmail   String?   @map("account_holder_email")
+  accountHolderMobile  String?   @map("account_holder_mobile")
+  productType          String    @map("product_type")
+  shariaCompliance     Boolean   @map("sharia_compliance")
+  accountCurrency      String    @default("MYR") @map("account_currency")
+  schemeId             Int       @map("scheme_id")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  scheme               AccountScheme @relation(fields: [schemeId], references: [id])
+  balances            Balance[]
+  transactions        Transaction[]
+
+  @@map("account")
+}
+
+model BalanceScheme {
+  id          Int       @id @default(autoincrement())
+  schemeName  String    @map("scheme_name")
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  balances    Balance[]
+
+  @@map("balancescheme")
+}
+
+model Balance {
+  id                     Int       @id @default(autoincrement())
+  accountId              String    @map("account_id")
+  accountBalanceDateTime DateTime  @map("account_balance_datetime")
+  outstandingBalance     Decimal?  @map("outstanding_balance")
+  pendingBalance         Decimal?  @map("pending_balance")
+  availableBalance       Decimal?  @map("available_balance")
+  creditLimit            Decimal?  @map("credit_limit")
+  accountCurrency        String    @map("account_currency")
+  repaymentDueDate       DateTime? @map("repayment_due_date")
+  repaymentAmountDue     Decimal?  @map("repayment_amount_due")
+  repaymentFrequency     String?   @map("repayment_frequency")
+  maturityDate           DateTime? @map("maturity_date")
+  schemeId               Int       @map("scheme_id")
+  createdAt              DateTime  @default(now()) @map("created_at")
+  updatedAt              DateTime  @updatedAt @map("updated_at")
+  account                Account   @relation(fields: [accountId], references: [accountId])
+  scheme                 BalanceScheme @relation(fields: [schemeId], references: [id])
+
+  @@map("balance")
+}
+
+model TransactionScheme {
+  id          Int       @id @default(autoincrement())
+  schemeName  String    @map("scheme_name")
+  description String?
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  transactions Transaction[]
+
+  @@map("transactionscheme")
+}
+
+model Transaction {
+  id                    Int       @id @default(autoincrement())
+  accountId             String    @map("account_id")
+  paymentScheme         String    @map("payment_scheme")
+  creditDebitIndicator  String    @map("credit_debit_indicator")
+  transactionId         String    @unique @map("transaction_id")
+  transactionType       String    @map("transaction_type")
+  transactionAmount     Decimal?  @map("transaction_amount")
+  transactionCurrency   String?   @map("transaction_currency")
+  accountCurrencyAmount Decimal   @map("account_currency_amount")
+  accountCurrency       String    @map("account_currency")
+  fxRate               Decimal?  @map("fx_rate")
+  status               String    @map("status")
+  bookingDatetime      DateTime  @map("booking_datetime")
+  valueDatetime        DateTime  @map("value_datetime")
+  merchantCategoryCode  String?   @map("merchant_category_code")
+  merchantName         String?   @map("merchant_name")
+  merchantAddress      String?   @map("merchant_address")
+  merchantPostalCode   String?   @map("merchant_postal_code")
+  merchantCity         String?   @map("merchant_city")
+  merchantCountry      String?   @map("merchant_country")
+  categoryPurposeCode  String?   @map("category_purpose_code")
+  businessCategoryCode String?   @map("business_category_code")
+  msic                String?   @map("msic")
+  schemeId             Int       @map("scheme_id")
+  createdAt            DateTime  @default(now()) @map("created_at")
+  updatedAt            DateTime  @updatedAt @map("updated_at")
+  account              Account   @relation(fields: [accountId], references: [accountId])
+  scheme               TransactionScheme @relation(fields: [schemeId], references: [id])
+
+  @@map("transaction")
+}
