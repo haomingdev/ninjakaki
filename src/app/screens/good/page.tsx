@@ -1,11 +1,15 @@
 "use client";
 
+import { useSearchParams } from 'next/navigation';
 import Sidebar from "@/components/Sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { BackButton } from "@/components/BackButton"
 
 export default function GoodPage() {
+  const searchParams = useSearchParams();
+  const ic = searchParams.get('ic') || '990606065820'; // Default IC for testing
+
   const insights = [
     "Complete your profile to unlock better loan offers",
     "Your credit score qualifies you for premium rates",

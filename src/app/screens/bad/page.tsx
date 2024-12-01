@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation';
 import Sidebar from "@/components/Sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -13,6 +14,8 @@ interface Insight {
 }
 
 export default function BadPage() {
+  const searchParams = useSearchParams();
+  const ic = searchParams.get('ic') || '990606065820'; // Default IC for testing
   const [insights, setInsights] = useState<Insight[]>([]);
 
   useEffect(() => {
@@ -27,7 +30,7 @@ export default function BadPage() {
         
         // Then fetch behavioral score
         console.log('Fetching behavioral score...');
-        const response = await fetch('/api/behavioural-score?ic=940309099938');
+        const response = await fetch(`/api/behavioural-score?ic=${ic}`);
         console.log('Behavioral score response status:', response.status);
         
         const data = await response.json();

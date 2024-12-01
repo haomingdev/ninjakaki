@@ -50,83 +50,94 @@ export default function ProfessionalismScreen() {
   }, [ic])
 
   if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
-  if (!score) return <div>No data available</div>
+  if (error) return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-8 text-center">Professionalism Analysis</h1>
+        <div className="text-red-500 text-center">{error}</div>
+      </div>
+    </div>
+  )
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Professionalism Score</h1>
-      
-      {/* Overall Score */}
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Overall Professionalism</CardTitle>
-          <CardDescription>Your work ethic and professional conduct assessment (30% of total score)</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
-            <Progress value={Math.min(100, score.score)} className="w-full" />
-            <p className="text-sm text-gray-500">{score.score.toFixed(2)}%</p>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-8 text-center">Professionalism Analysis</h1>
+        <div className="container mx-auto p-4">
+          <h1 className="text-2xl font-bold mb-6">Professionalism Score</h1>
+          
+          {/* Overall Score */}
+          <Card className="mb-6">
+            <CardHeader>
+              <CardTitle>Overall Professionalism</CardTitle>
+              <CardDescription>Your work ethic and professional conduct assessment (30% of total score)</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <Progress value={Math.min(100, score.score)} className="w-full" />
+                <p className="text-sm text-gray-500">{score.score.toFixed(2)}%</p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Component Scores */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Card>
+              <CardHeader>
+                <CardTitle>Task Fulfillment</CardTitle>
+                <CardDescription>Rate of completed tasks</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={score.components.fulfillingRate} className="mb-2" />
+                <p className="text-sm text-gray-500">{score.components.fulfillingRate.toFixed(2)}%</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Client Ratings</CardTitle>
+                <CardDescription>Average client satisfaction</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={score.components.rating} className="mb-2" />
+                <p className="text-sm text-gray-500">{score.components.rating.toFixed(2)}%</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Responsiveness</CardTitle>
+                <CardDescription>Task response time assessment</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={score.components.responsiveness} className="mb-2" />
+                <p className="text-sm text-gray-500">{score.components.responsiveness.toFixed(2)}%</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Performance Consistency</CardTitle>
+                <CardDescription>Based on min-max rating difference</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={score.components.minMaxDiff} className="mb-2" />
+                <p className="text-sm text-gray-500">{score.components.minMaxDiff.toFixed(2)}%</p>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Rating Trend</CardTitle>
+                <CardDescription>Recent rating improvement</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Progress value={score.components.influx} className="mb-2" />
+                <p className="text-sm text-gray-500">{score.components.influx.toFixed(2)}%</p>
+              </CardContent>
+            </Card>
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Component Scores */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Card>
-          <CardHeader>
-            <CardTitle>Task Fulfillment</CardTitle>
-            <CardDescription>Rate of completed tasks</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score.components.fulfillingRate} className="mb-2" />
-            <p className="text-sm text-gray-500">{score.components.fulfillingRate.toFixed(2)}%</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Client Ratings</CardTitle>
-            <CardDescription>Average client satisfaction</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score.components.rating} className="mb-2" />
-            <p className="text-sm text-gray-500">{score.components.rating.toFixed(2)}%</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Responsiveness</CardTitle>
-            <CardDescription>Task response time assessment</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score.components.responsiveness} className="mb-2" />
-            <p className="text-sm text-gray-500">{score.components.responsiveness.toFixed(2)}%</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Performance Consistency</CardTitle>
-            <CardDescription>Based on min-max rating difference</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score.components.minMaxDiff} className="mb-2" />
-            <p className="text-sm text-gray-500">{score.components.minMaxDiff.toFixed(2)}%</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Rating Trend</CardTitle>
-            <CardDescription>Recent rating improvement</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Progress value={score.components.influx} className="mb-2" />
-            <p className="text-sm text-gray-500">{score.components.influx.toFixed(2)}%</p>
-          </CardContent>
-        </Card>
+        </div>
       </div>
     </div>
   )

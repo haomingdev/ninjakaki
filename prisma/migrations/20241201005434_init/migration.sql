@@ -1,7 +1,8 @@
 -- CreateTable
 CREATE TABLE "transactions" (
     "id" SERIAL NOT NULL,
-    "userid" VARCHAR(6) NOT NULL,
+    "ic" VARCHAR(14) NOT NULL,
+    "full_name" VARCHAR(100) NOT NULL,
     "spending_amount" DOUBLE PRECISION NOT NULL,
     "receipient_category" TEXT NOT NULL,
     "necessities_or_non_essential" BOOLEAN NOT NULL,
@@ -13,7 +14,8 @@ CREATE TABLE "transactions" (
 -- CreateTable
 CREATE TABLE "financial_metrics" (
     "id" SERIAL NOT NULL,
-    "userid" VARCHAR(6) NOT NULL,
+    "ic" VARCHAR(14) NOT NULL,
+    "full_name" VARCHAR(100) NOT NULL,
     "cancellation_rate" DOUBLE PRECISION NOT NULL,
     "ratings" DOUBLE PRECISION NOT NULL,
     "responsiveness_to_task" DOUBLE PRECISION NOT NULL,
@@ -49,13 +51,13 @@ CREATE TABLE "_UserTransactions" (
 );
 
 -- CreateIndex
-CREATE INDEX "transactions_userid_idx" ON "transactions"("userid");
+CREATE INDEX "transactions_ic_idx" ON "transactions"("ic");
 
 -- CreateIndex
 CREATE INDEX "transactions_timestamp_idx" ON "transactions"("timestamp");
 
 -- CreateIndex
-CREATE INDEX "financial_metrics_userid_idx" ON "financial_metrics"("userid");
+CREATE INDEX "financial_metrics_ic_idx" ON "financial_metrics"("ic");
 
 -- CreateIndex
 CREATE INDEX "financial_metrics_timestamp_idx" ON "financial_metrics"("timestamp");

@@ -1,80 +1,44 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card"
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
-  const [ic, setIc] = useState('')
-  const router = useRouter()
+  const [ic, setIc] = useState('');
+  const router = useRouter();
 
-  const viewScores = (type: string) => {
-    if (!ic) {
-      alert('Please enter an IC number')
-      return
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (ic) {
+      router.push(`/screens/dashboard?ic=${ic}`);
     }
-    router.push(`/screens/${type}?ic=${ic}`)
-  }
+  };
 
   return (
-    <main className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Financial Risk Assessment</h1>
-      
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Enter IC Number</CardTitle>
-          <CardDescription>View detailed financial assessment scores</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
+    <main className="min-h-screen bg-gray-100 flex items-center justify-center">
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 className="text-3xl font-bold text-center mb-6 text-gray-800">CreditKaki</h1>
+        <p className="text-gray-600 text-center mb-8">Enter your IC number to check your financial health</p>
+        
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
             <input
               type="text"
               value={ic}
               onChange={(e) => setIc(e.target.value)}
-              placeholder="Enter IC number"
-              className="w-full p-2 border rounded"
+              placeholder="Enter IC Number"
+              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
             />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {/* Overall Behavioral Score */}
-              <button
-                onClick={() => viewScores('behavioural-score')}
-                className="p-2 bg-red-500 text-white rounded hover:bg-red-600 md:col-span-2"
-              >
-                View Overall Behavioral Score
-              </button>
-
-              {/* Individual Component Scores */}
-              <button
-                onClick={() => viewScores('financial-habits')}
-                className="p-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-              >
-                View Financial Habits
-              </button>
-
-              <button
-                onClick={() => viewScores('stability')}
-                className="p-2 bg-green-500 text-white rounded hover:bg-green-600"
-              >
-                View Stability Score
-              </button>
-
-              <button
-                onClick={() => viewScores('professionalism')}
-                className="p-2 bg-purple-500 text-white rounded hover:bg-purple-600 md:col-span-2"
-              >
-                View Professionalism Score
-              </button>
-            </div>
           </div>
-        </CardContent>
-      </Card>
+          <button
+            type="submit"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors"
+          >
+            Check Financial Health
+          </button>
+        </form>
+      </div>
     </main>
-  )
+  );
 }

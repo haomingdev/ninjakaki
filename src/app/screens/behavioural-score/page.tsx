@@ -1,7 +1,7 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import React, { useState, useEffect } from 'react'
+import { useSearchParams } from 'next/navigation'
 
 interface ScoreData {
   finalScore: number
@@ -48,31 +48,56 @@ interface ScoreData {
   }
 }
 
-export default function BehaviouralScoreScreen() {
-  const [ic, setIc] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
+export default function BehavioralScoreScreen() {
+  const searchParams = useSearchParams()
+  const ic = searchParams.get('ic')
+  const [isLoading, setIsLoading] = useState(true)
   const [scoreData, setScoreData] = useState<ScoreData | null>(null)
-  const [error, setError] = useState('')
+  const [error, setError] = useState<string | null>(null)
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError('')
-    setScoreData(null)
-
-    try {
-      const response = await fetch(`/api/behavioural-score?ic=${ic}`)
-      if (!response.ok) {
-        throw new Error('Failed to fetch score')
-      }
-      const data = await response.json()
-      setScoreData(data)
-    } catch (err) {
-      setError('Failed to fetch behavioural score. Please try again.')
-    } finally {
+  useEffect(() => {
+    if (!ic) {
+      setError('IC number is required')
       setIsLoading(false)
+      return
     }
-  }
+
+    fetch(`/api/behavioural-score?ic=${ic}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.error) {
+          setError(data.error)
+        } else {
+          setScoreData(data)
+        }
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setIsLoading(false))
+  }, [ic])
+
+  if (isLoading) return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">Loading...</div>
+      </div>
+    </div>
+  )
+
+  if (error) return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-red-500 text-center">{error}</div>
+      </div>
+    </div>
+  )
+
+  if (!scoreData) return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center">No data available</div>
+      </div>
+    </div>
+  )
 
   const renderScoreCard = ({ title, score, color }: { title: string; score: number | null | undefined; color: string }) => (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -112,94 +137,66 @@ export default function BehaviouralScoreScreen() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-8">
-          Behavioural Score Analysis
+        <h1 className="text-3xl font-bold text-gray-900 mb-8 text-center">
+          Behavioral Score Analysis
         </h1>
 
-        <div className="max-w-md mx-auto mb-8">
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label
-                htmlFor="ic"
-                className="block text-sm font-medium text-gray-700"
-              >
-                IC Number
-              </label>
-              <input
-                type="text"
-                id="ic"
-                value={ic}
-                onChange={(e) => setIc(e.target.value)}
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-                placeholder="Enter IC number"
-                required
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-blue-300"
+        <div className="space-y-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {renderScoreCard({
+              title: 'Final Score',
+              score: scoreData?.finalScore,
+              color: 'text-blue-600'
+            })}
+            {renderScoreCard({
+              title: 'Professionalism',
+              score: scoreData?.breakdown?.professionalism?.score,
+              color: 'text-green-600'
+            })}
+            {renderScoreCard({
+              title: 'Stability',
+              score: scoreData?.breakdown?.stability?.score,
+              color: 'text-purple-600'
+            })}
+            {renderScoreCard({
+              title: 'Financial Habits',
+              score: scoreData?.breakdown?.financialHabits?.score,
+              color: 'text-orange-600'
+            })}
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h3 className="text-lg font-semibold mb-2">Risk Category</h3>
+            <div
+              className={`text-2xl font-bold ${
+                scoreData.riskCategory === 'Low Risk'
+                  ? 'text-green-600'
+                  : scoreData.riskCategory === 'Medium Risk'
+                  ? 'text-yellow-600'
+                  : 'text-red-600'
+              }`}
             >
-              {isLoading ? 'Loading...' : 'Get Score'}
-            </button>
-          </form>
-
-          {error && (
-            <div className="mt-4 p-4 bg-red-50 text-red-700 rounded-md">
-              {error}
+              {scoreData.riskCategory}
             </div>
-          )}
-        </div>
+          </div>
 
-        {scoreData && (
-          <div className="space-y-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {renderScoreCard({
-                title: 'Final Score',
-                score: scoreData?.finalScore,
-                color: 'text-blue-600'
-              })}
-              {renderScoreCard({
-                title: 'Professionalism',
-                score: scoreData?.breakdown?.professionalism?.score,
-                color: 'text-green-600'
-              })}
-              {renderScoreCard({
-                title: 'Stability',
-                score: scoreData?.breakdown?.stability?.score,
-                color: 'text-purple-600'
-              })}
-              {renderScoreCard({
-                title: 'Financial Habits',
-                score: scoreData?.breakdown?.financialHabits?.score,
-                color: 'text-orange-600'
-              })}
-            </div>
-
-            <div className="bg-white p-6 rounded-lg shadow-md mb-6">
-              <h3 className="text-lg font-semibold mb-2">Risk Category</h3>
-              <div
-                className={`text-2xl font-bold ${
-                  scoreData.riskCategory === 'Low Risk'
-                    ? 'text-green-600'
-                    : scoreData.riskCategory === 'Medium Risk'
-                    ? 'text-yellow-600'
-                    : 'text-red-600'
-                }`}
-              >
-                {scoreData.riskCategory}
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Professionalism Breakdown</h3>
               {renderComponentBreakdown(
                 scoreData.breakdown.professionalism.components
               )}
+            </div>
 
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Stability Breakdown</h3>
               {renderComponentBreakdown(
                 scoreData.breakdown.stability.components
               )}
+            </div>
 
+            <div>
+              <h3 className="text-xl font-semibold mb-4">Financial Habits Breakdown</h3>
               {renderComponentBreakdown(
                 {
                   historicalSpending: scoreData.breakdown.financialHabits.components.historicalSpending,
@@ -209,19 +206,19 @@ export default function BehaviouralScoreScreen() {
                 }
               )}
             </div>
+          </div>
 
-            <div className="bg-white p-6 rounded-lg shadow-md">
-              <h3 className="text-lg font-semibold mb-4">
-                Financial Habits Details
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {renderComponentBreakdown(
-                  scoreData.breakdown.financialHabits.components.details
-                )}
-              </div>
+          <div className="bg-white p-6 rounded-lg shadow-md">
+            <h3 className="text-lg font-semibold mb-4">
+              Financial Habits Details
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {renderComponentBreakdown(
+                scoreData.breakdown.financialHabits.components.details
+              )}
             </div>
           </div>
-        )}
+        </div>
       </div>
     </div>
   )

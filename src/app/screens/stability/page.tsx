@@ -49,12 +49,20 @@ export default function StabilityScreen() {
   }, [ic])
 
   if (loading) return <div>Loading...</div>
-  if (error) return <div className="text-red-500">{error}</div>
+  if (error) return (
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-8 text-center">Stability Analysis</h1>
+        <div className="text-red-500 text-center">{error}</div>
+      </div>
+    </div>
+  )
   if (!score) return <div>No data available</div>
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-6">Stability Score</h1>
+    <div className="min-h-screen bg-gray-50 py-8">
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-3xl font-bold mb-8 text-center">Stability Analysis</h1>
       
       {/* Overall Score */}
       <Card className="mb-6">
@@ -117,5 +125,6 @@ export default function StabilityScreen() {
         </Card>
       </div>
     </div>
+  </div>
   )
 }

@@ -6,6 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { BackButton } from "@/components/BackButton"
 import { YouTubeEmbed } from "@/components/YouTubeEmbed"
 import { useEffect, useState } from "react";
+import { useSearchParams } from 'next/navigation';
 
 interface Insight {
   message: string;
@@ -57,7 +58,8 @@ interface Breakdown {
 }
 
 export default function MediumPage() {
-  const ic = '990606065820'; // Medium risk IC
+  const searchParams = useSearchParams();
+  const ic = searchParams.get('ic') || '990606065820'; // Medium risk IC
   const [score, setScore] = useState<number>(0);
   const [metrics, setMetrics] = useState<Metric>({});
   const [breakdown, setBreakdown] = useState<Breakdown | null>(null);
@@ -230,76 +232,105 @@ export default function MediumPage() {
   ]
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex">
       <Sidebar />
       <main className="flex-1 p-8">
-        <div className="space-y-8">
-          {/* Actionable Insights Section */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl font-bold">Actionable Insights</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ul className="list-decimal list-inside space-y-2">
-                {insights.map((insight, index) => (
-                  <li key={index} className="text-muted-foreground">
-                    {insight.message}
-                  </li>
-                ))}
-              </ul>
-            </CardContent>
-          </Card>
-
-          {/* Educational Videos Section */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4">Educational Resources</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {educationalVideos.map((video, index) => (
-                <Card key={index} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle>{video.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <YouTubeEmbed videoId={video.videoId} title={video.title} />
-                    <p className="mt-4 text-sm text-muted-foreground">
-                      {video.description}
-                    </p>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {/* Featured Products Section */}
-          <div>
-            <h2 className="text-2xl font-bold mb-4 mt-6">Featured Products</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
-              {products.map((product, index) => (
-                <Card key={index} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle>{product.title}</CardTitle>
-                  </CardHeader>
-                  <CardContent className="flex-grow">
-                    <pre className="whitespace-pre-line text-sm text-muted-foreground">
-                      {product.details}
-                    </pre>
-                  </CardContent>
-                  <CardFooter>
-                    <Button className="w-full">
-                      {product.buttonText}
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          </div>
-
-          {/* Back Button */}
-          <div className="mt-8">
-            <BackButton />
-          </div>
-
+        <h1 className="text-2xl font-bold mb-6">Medium Risk Assessment</h1>
+        <div className="bg-yellow-100 p-6 rounded-lg mb-6">
+          <h2 className="text-xl font-semibold mb-4">Risk Level: Medium</h2>
+          <p className="text-gray-700 mb-4">
+            Your financial behavior shows moderate risk factors. While there are some positive aspects,
+            there's room for improvement in certain areas.
+          </p>
         </div>
+
+        <div className="grid gap-6">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-3">Recommendations</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Consider building an emergency fund</li>
+              <li>Review and optimize your monthly budget</li>
+              <li>Look into debt consolidation options if applicable</li>
+              <li>Start tracking your expenses more closely</li>
+            </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <h3 className="text-lg font-semibold mb-3">Next Steps</h3>
+            <ul className="list-disc pl-6 space-y-2">
+              <li>Set up automatic savings transfers</li>
+              <li>Create a debt repayment plan</li>
+              <li>Review your credit report regularly</li>
+              <li>Consider financial counseling services</li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Actionable Insights Section */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold">Actionable Insights</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ul className="list-decimal list-inside space-y-2">
+              {insights.map((insight, index) => (
+                <li key={index} className="text-muted-foreground">
+                  {insight.message}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+
+        {/* Educational Videos Section */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4">Educational Resources</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {educationalVideos.map((video, index) => (
+              <Card key={index} className="flex flex-col">
+                <CardHeader>
+                  <CardTitle>{video.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <YouTubeEmbed videoId={video.videoId} title={video.title} />
+                  <p className="mt-4 text-sm text-muted-foreground">
+                    {video.description}
+                  </p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Featured Products Section */}
+        <div>
+          <h2 className="text-2xl font-bold mb-4 mt-6">Featured Products</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-4">
+            {products.map((product, index) => (
+              <Card key={index} className="flex flex-col">
+                <CardHeader>
+                  <CardTitle>{product.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="flex-grow">
+                  <pre className="whitespace-pre-line text-sm text-muted-foreground">
+                    {product.details}
+                  </pre>
+                </CardContent>
+                <CardFooter>
+                  <Button className="w-full">
+                    {product.buttonText}
+                  </Button>
+                </CardFooter>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Back Button */}
+        <div className="mt-8">
+          <BackButton />
+        </div>
+
       </main>
     </div>
   )
