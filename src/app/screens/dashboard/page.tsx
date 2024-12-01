@@ -36,25 +36,14 @@ export default function Dashboard() {
 
     const fetchMetrics = async () => {
       try {
-        const [behavioralRes, financialRes, stabilityRes, professionalismRes] = await Promise.all([
-          fetch(`/api/behavioural-score?ic=${ic}`),
-          fetch(`/api/financial-habits?ic=${ic}`),
-          fetch(`/api/stability?ic=${ic}`),
-          fetch(`/api/professionalism?ic=${ic}`)
-        ]);
-
+        const behavioralRes = await fetch(`/api/behavioural-score?ic=${ic}`);
         const behavioral = await behavioralRes.json();
-        const financial = await financialRes.json();
-        const stability = await stabilityRes.json();
-        const professionalism = await professionalismRes.json();
-
-        console.log('Behavioral response:', behavioral);
 
         setMetrics({
           behavioralScore: behavioral.finalScore,
-          financialHabitsScore: financial.score,
-          stabilityScore: stability.score,
-          professionalismScore: professionalism.score
+          financialHabitsScore: behavioral.breakdown.financialHabits.score,
+          stabilityScore: behavioral.breakdown.stability.score,
+          professionalismScore: behavioral.breakdown.professionalism.score
         });
       } catch (error) {
         console.error('Error fetching metrics:', error);
