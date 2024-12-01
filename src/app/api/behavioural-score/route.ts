@@ -7,23 +7,26 @@ function normalizeScore(value: number): number {
 }
 
 async function calculateProfessionalismScore(metrics: any) {
-  // Normalize input values first
-  const cancellationRate = Math.max(0, Math.min(1, metrics.cancellationRate || 0))
-  const ratings = Math.max(0, Math.min(1, metrics.ratings || 0))
-  const responsiveness = Math.max(0, Math.min(1, metrics.responsivenessToTask || 0))
-  const minMaxDiff = Math.max(0, Math.min(1, metrics.minMaxDiffPast6Months || 0))
-  const ratingsInflux = Math.max(0, Math.min(1, metrics.ratingsInflux || 0))
+  // Calculate fulfilling rate (ranges from 0-10)
+  const fulfillingRate = 10 - (metrics.cancellationRate || 0)
+  console.log('Professionalism - Fulfilling Rate:', {
+    cancellationRate: metrics.cancellationRate,
+    fulfillingRate: fulfillingRate,
+    normalized: (fulfillingRate / 10) * 100
+  })
 
-  // Calculate individual components (0-100%)
-  const fulfillingRate = normalizeScore((1 - cancellationRate) * 100)
-  const ratingScore = normalizeScore(ratings * 100)
-  const responsivenessScore = normalizeScore(responsiveness * 100)
-  const minMaxDiffScore = normalizeScore(minMaxDiff * 100)
-  const influxScore = normalizeScore(ratingsInflux * 100)
+  // Convert fulfilling rate to percentage (0-100%)
+  const fulfillingRateScore = (fulfillingRate / 10) * 100
+
+  // Other components (0-100%)
+  const ratingScore = normalizeScore(metrics.ratings * 20) // Assuming ratings are 0-5
+  const responsivenessScore = normalizeScore(metrics.responsivenessToTask * 100)
+  const minMaxDiffScore = normalizeScore((1 - metrics.minMaxDiffPast6Months) * 100)
+  const influxScore = normalizeScore(metrics.ratingsInflux * 100)
 
   // Calculate weighted score (max 30%)
   const professionalismScore = (
-    (fulfillingRate * 0.25) +
+    (fulfillingRateScore * 0.25) +
     (ratingScore * 0.20) +
     (responsivenessScore * 0.15) +
     (minMaxDiffScore * 0.20) +
@@ -33,7 +36,7 @@ async function calculateProfessionalismScore(metrics: any) {
   return {
     score: professionalismScore,
     components: {
-      fulfillingRate,
+      fulfillingRate: fulfillingRateScore,
       rating: ratingScore,
       responsiveness: responsivenessScore,
       minMaxDiff: minMaxDiffScore,
@@ -50,13 +53,32 @@ async function calculateStabilityScore(metrics: any) {
   const permanentEmploymentValue = metrics.permanentEmployment === 'Yes' ? 100 : 50
   const yearsOfEmploymentValue = normalizeScore((Math.min(metrics.yearsOfEmployment || 0, 10) / 10) * 100)
   
-  // Fluctuation rate should be inverse - higher fluctuation means lower score
-  const rawFluctuationRate = metrics.fluctuationRate ?? 0
-  console.log('Fluctuation rate calculation:', {
-    raw: rawFluctuationRate,
-    normalized: (1 - rawFluctuationRate) * 100
+  // Calculate fluctuation rate score (0-10 scale)
+  const rawFluctuationRate = metrics.fluctuationRate ?? 5 // Default to medium if missing
+  // Convert to score (0 = 100%, 10 = 0%)
+  const fluctuationValue = rawFluctuationRate === 0 
+    ? 100 // Perfect score if no fluctuation
+    : normalizeScore(Math.max(0, 100 - (rawFluctuationRate * 10)))
+  
+  console.log('Stability Score Components:', {
+    gig: {
+      type: metrics.typeOfGig,
+      score: gigValue
+    },
+    employment: {
+      permanent: metrics.permanentEmployment,
+      years: metrics.yearsOfEmployment,
+      permanentScore: permanentEmploymentValue,
+      yearsScore: yearsOfEmploymentValue
+    },
+    fluctuation: {
+      raw: rawFluctuationRate + '/10',
+      calculation: rawFluctuationRate === 0 
+        ? 'Perfect score - no fluctuation'
+        : `100 - (${rawFluctuationRate} * 10) = ${100 - (rawFluctuationRate * 10)}`,
+      score: fluctuationValue + '%'
+    }
   })
-  const fluctuationValue = normalizeScore((1 - rawFluctuationRate) * 100)
 
   // Calculate weighted score (max 40%)
   const stabilityScore = (
@@ -90,32 +112,41 @@ async function calculateFinancialHabitsScore(metrics: any, transactions: any[]) 
   // Calculate luxury ratio (0-100%)
   const totalTransactions = transactions.length
   const luxuryCount = transactions.filter(tx => tx.necessitiesOrNonEssential === false).length
-
   const luxuryToNecessityRatio = totalTransactions > 0 
     ? normalizeScore((luxuryCount / totalTransactions) * 100)
     : 0
 
-  console.log('Luxury calculation:', {
-    totalTransactions,
-    luxuryCount,
-    ratio: luxuryToNecessityRatio,
-    transactions: transactions.slice(0, 3).map(t => ({ 
-      id: t.id, 
-      necessity: t.necessitiesOrNonEssential
-    }))
-  })
+  // Calculate expense ratio score (input is percentage)
+  const rawExpenseRatio = metrics.expenseToIncomeRatio ?? 150 // Default to high if missing
+  // Convert to score (higher ratio = lower score)
+  const expenseRatioScore = rawExpenseRatio === 0 
+    ? 100 // Perfect score if no expenses
+    : normalizeScore(Math.max(0, 100 - (rawExpenseRatio / 1.5)))
 
-  // Calculate expense ratio (0-100%)
-  const rawExpenseRatio = metrics.expenseToIncomeRatio ?? 0
-  console.log('Expense ratio calculation:', {
-    raw: rawExpenseRatio,
-    normalized: (1 - rawExpenseRatio) * 100
+  console.log('Financial Habits Components:', {
+    savings: {
+      regular: metrics.regularSaving,
+      emergency: metrics.emergencyFundAvailability,
+      consistent: metrics.consistentSpending,
+      score: otherExpensesScore + '%'
+    },
+    luxury: {
+      total: totalTransactions,
+      luxuryCount,
+      ratio: luxuryToNecessityRatio + '%'
+    },
+    expenseRatio: {
+      raw: rawExpenseRatio + '%',
+      calculation: rawExpenseRatio === 0
+        ? 'Perfect score - no expenses'
+        : `100 - (${rawExpenseRatio} / 1.5) = ${100 - (rawExpenseRatio / 1.5)}`,
+      score: expenseRatioScore + '%'
+    }
   })
-  const expenseRatioScore = normalizeScore((1 - rawExpenseRatio) * 100)
 
   // Calculate individual components (0-100%)
   const historicalSpendingScore = normalizeScore(metrics.consistentSpending ? 100 : 50)
-  const impulsivePurchaseScore = normalizeScore(100 - luxuryToNecessityRatio)
+  const impulsivePurchaseScore = normalizeScore(100 - (metrics.impulsivePurchaseRate || 0))
   const consistentRepaymentScore = normalizeScore(metrics.recurringExpenseConsistency * 100 || 0)
 
   // Calculate weighted score (max 30%)
@@ -145,9 +176,12 @@ export async function GET(request: Request) {
   const { searchParams } = new URL(request.url)
   const ic = searchParams.get('ic')
 
+  console.log('Received request for IC:', ic);
+
   if (!ic) {
+    console.log('No IC provided');
     return NextResponse.json(
-      { error: 'IC number is required' },
+      { success: false, error: 'IC number is required' },
       { status: 400 }
     )
   }
@@ -155,8 +189,12 @@ export async function GET(request: Request) {
   try {
     // First get the metrics
     const metrics = await prisma.financialMetrics.findFirst({
-      where: { ic },
+      where: {
+        ic: ic
+      },
       select: {
+        ic: true,
+        fullName: true,
         cancellationRate: true,
         ratings: true,
         responsivenessToTask: true,
@@ -166,17 +204,23 @@ export async function GET(request: Request) {
         permanentEmployment: true,
         yearsOfEmployment: true,
         fluctuationRate: true,
+        grossIncome: true,
+        netIncome: true,
+        impulsivePurchaseRate: true,
+        recurringExpenseConsistency: true,
         expenseToIncomeRatio: true,
         regularSaving: true,
         emergencyFundAvailability: true,
-        consistentSpending: true,
-        recurringExpenseConsistency: true
+        consistentSpending: true
       }
     })
 
+    console.log('Retrieved metrics:', metrics);
+
     if (!metrics) {
+      console.log('No metrics found for IC:', ic);
       return NextResponse.json(
-        { error: 'No metrics found for this IC' },
+        { success: false, error: 'No metrics found for this IC' },
         { status: 404 }
       )
     }
@@ -191,16 +235,7 @@ export async function GET(request: Request) {
       }
     })
 
-    console.log('Data fetched:', {
-      metrics: {
-        fluctuationRate: metrics.fluctuationRate,
-        expenseToIncomeRatio: metrics.expenseToIncomeRatio,
-        typeOfGig: metrics.typeOfGig,
-        permanentEmployment: metrics.permanentEmployment
-      },
-      transactionCount: transactions.length,
-      sampleTransactions: transactions.slice(0, 3)
-    })
+    console.log('Retrieved transactions count:', transactions.length);
 
     // Calculate all component scores
     const [professionalismData, stabilityData, financialHabitsData] = await Promise.all([
@@ -226,34 +261,46 @@ export async function GET(request: Request) {
       riskCategory = 'High Risk'
     }
 
-    return NextResponse.json({
+    const response = {
+      success: true,
+      metrics: {
+        cancellationRate: metrics.cancellationRate || 0,
+        fluctuationRate: metrics.fluctuationRate || 0,
+        expenseToIncomeRatio: metrics.expenseToIncomeRatio || 0,
+        impulsivePurchaseRate: metrics.impulsivePurchaseRate || 0,
+        typeOfGig: metrics.typeOfGig || '',
+        recurringExpenseConsistency: metrics.recurringExpenseConsistency || 0
+      },
       finalScore,
       riskCategory,
       breakdown: {
         professionalism: {
-          score: normalizeScore(professionalismData.score), // Convert back to 100% scale
+          score: normalizeScore(professionalismData.score),
           weight: 0.30,
           weightedScore: professionalismData.score,
           components: professionalismData.components
         },
         stability: {
-          score: normalizeScore(stabilityData.score), // Convert back to 100% scale
+          score: normalizeScore(stabilityData.score),
           weight: 0.40,
           weightedScore: stabilityData.score,
           components: stabilityData.components
         },
         financialHabits: {
-          score: normalizeScore(financialHabitsData.score), // Convert back to 100% scale
+          score: normalizeScore(financialHabitsData.score),
           weight: 0.30,
           weightedScore: financialHabitsData.score,
           components: financialHabitsData.components
         }
       }
-    })
+    };
+
+    console.log('Sending response:', JSON.stringify(response, null, 2));
+    return NextResponse.json(response);
   } catch (error) {
     console.error('Error calculating behavioral score:', error)
     return NextResponse.json(
-      { error: 'Failed to calculate behavioral score' },
+      { success: false, error: 'Failed to calculate behavioral score' },
       { status: 500 }
     )
   }
